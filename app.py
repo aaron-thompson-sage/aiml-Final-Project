@@ -24,8 +24,10 @@ app.title=tabtitle
 
 app.layout = html.Div(children=[
     html.H1(myheading1),
+    html.Br(),
     html.Div(children=[dcc.Markdown('Enter an artist name')]),
     dcc.Input(id='artistname', value='', type='text'),
+    html.Br(),
     html.Div(children=[dcc.Markdown('Select features to compare')]),
     dcc.Checklist(id='features',
         options = [
@@ -38,6 +40,7 @@ app.layout = html.Div(children=[
             {'label': 'valence', 'value': 'valence'},
         ],
         value = ['danceability', 'energy', 'speechiness', 'acousticness', 'instrumentalness', 'liveness', 'valence']),
+    html.Br(),
     html.Div(children=[dcc.Markdown('Max songs to search')]),
     dcc.Dropdown(id='maxsongs',
         options = [
@@ -46,6 +49,8 @@ app.layout = html.Div(children=[
             {'label': 'a lot', 'value' : '1500'}
         ],
         value = '20'),
+    html.Br(),
+    html.Button('Submit', id='button'),
     html.Div(id='my-div'),
     html.Br(),
     html.A('Code on Github', href=githublink),
@@ -106,12 +111,13 @@ def findopposite(comparetrack):
 ########## Define Callback
 @app.callback(
     Output(component_id='my-div', component_property='children'),
-    [Input(component_id='artistname', component_property='value'),
-    Input(component_id='features', component_property='value'),
-    Input(component_id='maxsongs', component_property='value'),
+    [State(component_id='artistname', component_property='value'),
+    State(component_id='features', component_property='value'),
+    State(component_id='maxsongs', component_property='value'),
+    Input(component_id='button', component_property='value')
     ]
 )
-def update_output_div(artistname, features, maxsongs):
+def update_output_div(artistname, features, maxsongs, clicked):
     outstring = 'Artist: ' + artistname + ', features: '
     for feature in features:
         outstring = outstring + feature + ' '
