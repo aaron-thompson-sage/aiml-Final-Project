@@ -122,7 +122,7 @@ def update_output_div(artistname, features, maxsongs, clicked):
     for feature in features:
         outstring = outstring + feature + ' '
     outstring = outstring + 'max: ' + str(maxsongs) + '\n'
-    outstring = outstring + clicked
+    outstring = outstring + str(clicked)
     return outstring
 
     results = sp.search(q=artistname, type='artist', limit=20, offset=0)
