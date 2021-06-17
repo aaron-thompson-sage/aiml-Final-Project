@@ -126,11 +126,13 @@ def update_output_div(artistname, features, maxsongs, clicks):
     outstring = outstring + 'max: ' + str(maxsongs) + '<br>'
     #outstring = outstring + str(clicks)
     #return outstring
-    if clicks <= lastclickcount:
+    if clicks is None or clicks <= lastclickcount:
         return "Click Submit to make a new calculation."
 
-    if artistname != lastartistname:
+    lastclickcount = clicks
 
+    if artistname != lastartistname:
+        lastartistname = artistname
         results = sp.search(q=artistname, type='artist', limit=20, offset=0)
 
         artisturi = results['artists']['items'][0]['id']
