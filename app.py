@@ -107,6 +107,8 @@ def findopposite(comparetrack):
 
     return worstmatch
 
+lastclickcount = 0
+lastartistname = ''
 
 ########## Define Callback
 @app.callback(
@@ -121,46 +123,50 @@ def update_output_div(artistname, features, maxsongs, clicks):
     outstring = 'Artist: ' + artistname + ', features: '
     for feature in features:
         outstring = outstring + feature + ' '
-    outstring = outstring + 'max: ' + str(maxsongs) + '\n'
-    outstring = outstring + str(clicks)
-    return outstring
+    outstring = outstring + 'max: ' + str(maxsongs) + '<br>'
+    #outstring = outstring + str(clicks)
+    #return outstring
+    if clicks <= lastclickcount:
+        return "Click Submit to make a new calculation."
 
-    results = sp.search(q=artistname, type='artist', limit=20, offset=0)
+    if artistname != lastartistname:
 
-    artisturi = results['artists']['items'][0]['id']
+        results = sp.search(q=artistname, type='artist', limit=20, offset=0)
 
-    spotify = spotipy.Spotify(client_credentials_manager=SpotifyClientCredentials(client_id=clientid, client_secret=clientsecret))
+        artisturi = results['artists']['items'][0]['id']
 
-    results = spotify.artist_albums(artisturi, album_type='album')
-    allalbums = results['items']
-    while results['next']:
-        results = spotify.next(results)
-        allalbums.extend(results['items'])
+        spotify = spotipy.Spotify(client_credentials_manager=SpotifyClientCredentials(client_id=clientid, client_secret=clientsecret))
 
-    albumtracks = []
-    tids = []
-    tracks = []
-    albums = []
-    for album in allalbums:
-        addalbum = True
-        for existingalbum in albums:
-            if existingalbum['name'] == album['name']:
-                addalbum = False
-                break
-        if addalbum:
-            albums.append(album)
+        results = spotify.artist_albums(artisturi, album_type='album')
+        allalbums = results['items']
+        while results['next']:
+            results = spotify.next(results)
+            allalbums.extend(results['items'])
 
-    for album in albums:
-        #album = albums[0]
-        #print(album['name'])
-        #print(album['uri'])
-        for track in spotify.album_tracks(album['id'])['items']:
-            #tracks.append(track)
-            feature = sp.audio_features(track['id'])[0]
-            feature['name'] = track['name']
-            tracks.append(feature)
-            if len(tracks) > maxsongs:
-                break;
+        albumtracks = []
+        tids = []
+        tracks = []
+        albums = []
+        for album in allalbums:
+            addalbum = True
+            for existingalbum in albums:
+                if existingalbum['name'] == album['name']:
+                    addalbum = False
+                    break
+            if addalbum:
+                albums.append(album)
+
+        for album in albums:
+            #album = albums[0]
+            #print(album['name'])
+            #print(album['uri'])
+            for track in spotify.album_tracks(album['id'])['items']:
+                #tracks.append(track)
+                feature = sp.audio_features(track['id'])[0]
+                feature['name'] = track['name']
+                tracks.append(feature)
+                if len(tracks) > maxsongs:
+                    break;
 
     comparetrack = tracks[0]
 
