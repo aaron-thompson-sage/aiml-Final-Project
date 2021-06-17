@@ -3,6 +3,9 @@ import dash_core_components as dcc
 import dash_html_components as html
 import plotly.graph_objs as go
 from dash.dependencies import Input, Output, State
+import spotipy
+import math
+from spotipy.oauth2 import SpotifyClientCredentials
 
 ########### Define your variables ######
 
@@ -52,6 +55,54 @@ app.layout = html.Div(children=[
 )
 
 
+clientid = 'a2b4005538904434809bf1a8974f3eb7'
+clientsecret = 'ea77d14c398e41d394fdcf94c1c79347'
+
+def distance_feature(feature1, feature2, featurename):
+    diff = feature1[featurename] - feature2[featurename]
+    return diff*diff
+
+def getdistance(f1, f2, features):
+    # features = [
+    #     'danceability',
+    #     'energy',
+    #     'speechiness',
+    #     'acousticness',
+    #     'instrumentalness',
+    #     'liveness',
+    #     'valence'
+    # ]
+    distance = 0
+    for feature in features:
+        distance += distance_feature(f1, f2, feature)
+    return math.sqrt(distance)
+
+def findopposite(comparetrack):
+    #for track in tracks:
+    #     if track and ('Contredanse' in track['name']):
+    #         comparetrack = track
+    #         break
+
+
+    bestmatch = ''
+    bestdistance = 1
+    worstmatch = ''
+    worstdistance = 0
+    #comparetrack = tracks[1]
+    for track in tracks:
+        if (track):
+            distance = getdistance(comparetrack, track)
+            if distance > 0 and comparetrack['name'] != track['name']:
+                if distance < bestdistance:
+                    bestmatch = track
+                    bestdistance = distance
+                if distance > worstdistance:
+                    worstmatch = track
+                    worstdistance = distance
+
+    return worstmatch
+
+
 ########## Define Callback
 @app.callback(
     Output(component_id='my-div', component_property='children'),
@@ -64,7 +115,58 @@ def update_output_div(artistname, features, maxsongs):
     outstring = 'Artist: ' + artistname + ', features: '
     for feature in features:
         outstring = outstring + feature + ' '
-    outstring = outstring + 'max: ' + str(maxsongs)
+    outstring = outstring + 'max: ' + str(maxsongs) + '\n'
+
+    results = sp.search(q=artistname, type='artist', limit=20, offset=0)
+
+    artisturi = results['artists']['items'][0]['id']
+
+    spotify = spotipy.Spotify(client_credentials_manager=SpotifyClientCredentials(client_id=clientid, client_secret=clientsecret))
+
+    results = spotify.artist_albums(artisturi, album_type='album')
+    allalbums = results['items']
+    while results['next']:
+        results = spotify.next(results)
+        allalbums.extend(results['items'])
+
+    albumtracks = []
+    tids = []
+    tracks = []
+    albums = []
+    for album in allalbums:
+        addalbum = True
+        for existingalbum in albums:
+            if existingalbum['name'] == album['name']:
+                addalbum = False
+                break
+        if addalbum:
+            albums.append(album)
+
+    for album in albums:
+        #album = albums[0]
+        #print(album['name'])
+        #print(album['uri'])
+        for track in spotify.album_tracks(album['id'])['items']:
+            #tracks.append(track)
+            feature = sp.audio_features(track['id'])[0]
+            feature['name'] = track['name']
+            tracks.append(feature)
+            if len(tracks) > maxsongs:
+                break;
+
+    comparetrack = tracks[0]
+
+    maxtrycount = 20
+    opposite = findopposite(comparetrack)
+    doubleopposite = findopposite(opposite)
+    while comparetrack['name'] != doubleopposite['name'] and maxtrycount > 0:
+        comparetrack = opposite
+        opposite = findopposite(comparetrack)
+        doubleopposite = findopposite(opposite)
+        maxtrycount -= 1
+
+    outstring = outstring + 'These 2 songs are opposites: ' + comparetrack['name'] + ' and ' + opposite['name'] + '.'
+
     return outstring
 
 
