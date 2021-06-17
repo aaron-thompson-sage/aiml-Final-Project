@@ -13,6 +13,10 @@ myheading1='Song variety by Artist'
 tabtitle = 'Final Project - Aaron Thompson'
 sourceurl = 'https://github.com/aaron-thompson-sage/'
 githublink = 'https://github.com/aaron-thompson-sage/'
+lastclickcount = 0
+lastartistname = ''
+clientid = 'a2b4005538904434809bf1a8974f3eb7'
+clientsecret = 'ea77d14c398e41d394fdcf94c1c79347'
 
 ########### Initiate the app
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
@@ -60,9 +64,6 @@ app.layout = html.Div(children=[
 )
 
 
-clientid = 'a2b4005538904434809bf1a8974f3eb7'
-clientsecret = 'ea77d14c398e41d394fdcf94c1c79347'
-
 def distance_feature(feature1, feature2, featurename):
     diff = feature1[featurename] - feature2[featurename]
     return diff*diff
@@ -106,9 +107,6 @@ def findopposite(comparetrack):
                     worstdistance = distance
 
     return worstmatch
-
-lastclickcount = 0
-lastartistname = ''
 
 ########## Define Callback
 @app.callback(
