@@ -61,11 +61,10 @@ app.layout = html.Div(children=[
     ]
 )
 def update_output_div(artistname, features, maxsongs):
-
-    outstring = 'Artist: ' . artistname . ', features: '
+    outstring = 'Artist: ' + artistname + ', features: '
     for feature in features:
-        outstring .= feature . ' '
-    outstring .= 'max: ' . maxsongs
+        outstring = outstring + feature + ' '
+    outstring = outstring + 'max: ' + str(maxsongs)
     return outstring
 
 
