@@ -1,0 +1,35 @@
+example:  virginia-2016-vote-totals.herokuapp.com
+In 06 class.
+
+app.py contains app.layout = html.Div([
+	html.H2(heading1),
+	html.Img(src=app.get_asset_url(image1), style={'width':'auto},
+	dcc.Dropdown(id='your-input-here',
+		options=[{'label': i, 'value': i} for i in list_of_choices],
+		value='punch',
+		style={'width': '500px'}),
+	html.Br(), //break
+	html.Div(id='your-output-here', children=''),
+	html.Br(),
+	html.A('Code on Github', href=githublink),
+])
+
+@app.callback(dash.dependencies.Output('your-output-here', 'children'),
+	[dash.dependencies.Input('your-input-here', 'value')])
+def display_value(whatever_you_chose):
+	return f'Chuck Norris will now {whatever_you_chose}.'
+
+if __name__ == '__main__':
+	app.run_server(debug=True)
+
+slides/intro-logistic-regression.pdf
+
+Classification:
+ideas - survivors of titanic
+ Use /practice/soloution-code/bank...
+ 
+fill data with average - fillna(round(df[col].mean(), 2))
+
+Classification performance measurements:  precision, accuracy, recall.
+
+AUC is the "golden standard"
