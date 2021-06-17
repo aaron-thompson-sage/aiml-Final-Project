@@ -114,7 +114,7 @@ def findopposite(comparetrack):
     [Input(component_id='artistname', component_property='value'),
     Input(component_id='features', component_property='value'),
     Input(component_id='maxsongs', component_property='value'),
-    Input(component_id='button', component_property='n-clicks')
+    Input(component_id='button', component_property='n_clicks')
     ]
 )
 def update_output_div(artistname, features, maxsongs, clicks):
