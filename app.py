@@ -114,15 +114,15 @@ def findopposite(comparetrack):
     [Input(component_id='artistname', component_property='value'),
     Input(component_id='features', component_property='value'),
     Input(component_id='maxsongs', component_property='value'),
-    Input(component_id='button', component_property='value')
+    Input(component_id='button', component_property='n-clicks')
     ]
 )
-def update_output_div(artistname, features, maxsongs, clicked):
+def update_output_div(artistname, features, maxsongs, clicks):
     outstring = 'Artist: ' + artistname + ', features: '
     for feature in features:
         outstring = outstring + feature + ' '
     outstring = outstring + 'max: ' + str(maxsongs) + '\n'
-    outstring = outstring + str(clicked)
+    outstring = outstring + str(clicks)
     return outstring
 
     results = sp.search(q=artistname, type='artist', limit=20, offset=0)
