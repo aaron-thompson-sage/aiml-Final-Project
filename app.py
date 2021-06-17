@@ -118,16 +118,25 @@ def findopposite(comparetrack):
     ]
 )
 def update_output_div(artistname, features, maxsongs, clicks):
+    # ek = determineEncryptionKey()
+    # port = os.Getenv("PORT")
+    # sessionStore = sessions.NewCookieStore(
+    #     []byte(os.Getenv("SESSION_AUTHENTICATION_KEY")),
+    #     ek,
+    # )
+    # r = http.Request()
+    # session = sessionStore.Get()
+
     outstring = 'Artist: ' + artistname + ', features: '
     for feature in features:
         outstring = outstring + feature + ' '
     outstring = outstring + 'max: ' + str(maxsongs) + '<br>'
     #outstring = outstring + str(clicks)
     #return outstring
-    if clicks is None or clicks <= lastclickcount:
+    if (clicks is None) or (int(clicks) <= lastclickcount):
         return "Click Submit to make a new calculation."
 
-    lastclickcount = clicks
+    lastclickcount = int(clicks)
 
     if artistname != lastartistname:
         lastartistname = artistname
