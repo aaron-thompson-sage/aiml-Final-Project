@@ -131,10 +131,9 @@ def update_output_div(artistname, features, maxsongs, clicks):
     global clientid
     global client_secret
 
-    outstring = 'Artist: ' + artistname + ', features: '
-    for feature in features:
-        outstring = outstring + feature + ' '
-    outstring = outstring + 'max: ' + str(maxsongs) + '<br>'
+    # for feature in features:
+    #     outstring = outstring + feature + ' '
+    # outstring = outstring + 'max: ' + str(maxsongs)
     #outstring = outstring + str(clicks)
     #return outstring
     if (clicks is None) or (int(clicks) <= lastclickcount):
@@ -152,7 +151,7 @@ def update_output_div(artistname, features, maxsongs, clicks):
         results = sp.search(q=artistname, type='artist', limit=20, offset=0)
 
         artisturi = results['artists']['items'][0]['id']
-        artistname = results['artists']['items'][0]['name']
+        #artistname = results['artists']['items'][0]['name']
 
         spotify = spotipy.Spotify(client_credentials_manager=SpotifyClientCredentials(client_id=clientid, client_secret=clientsecret))
 
@@ -198,7 +197,7 @@ def update_output_div(artistname, features, maxsongs, clicks):
         doubleopposite = findopposite(tracks, opposite, features)
         maxtrycount -= 1
 
-    outstring = outstring + 'These 2 songs are opposites: ' + comparetrack['name'] + ' and ' + opposite['name'] + '.'
+    outstring = 'These 2 songs are opposites: ' + comparetrack['name'] + ' and ' + opposite['name'] + '.'
 
     return outstring
 
