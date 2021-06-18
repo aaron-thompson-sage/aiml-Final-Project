@@ -152,6 +152,7 @@ def update_output_div(artistname, features, maxsongs, clicks):
         results = sp.search(q=artistname, type='artist', limit=20, offset=0)
 
         artisturi = results['artists']['items'][0]['id']
+        artistname = results['artists']['items'][0]['name']
 
         spotify = spotipy.Spotify(client_credentials_manager=SpotifyClientCredentials(client_id=clientid, client_secret=clientsecret))
 
