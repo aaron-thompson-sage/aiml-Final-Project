@@ -184,6 +184,8 @@ def update_output_div(artistname, features, maxsongs, clicks):
             #album = albums[0]
             #print(album['name'])
             #print(album['uri'])
+            if len(tracks) > int(maxsongs):
+                break;
             for track in spotify.album_tracks(album['id'])['items']:
                 #tracks.append(track)
                 feature = sp.audio_features(track['id'])[0]
