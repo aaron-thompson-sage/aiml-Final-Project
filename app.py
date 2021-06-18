@@ -126,6 +126,8 @@ def update_output_div(artistname, features, maxsongs, clicks):
     # )
     # r = http.Request()
     # session = sessionStore.Get()
+    global lastclickcount
+    global lastartistname
 
     outstring = 'Artist: ' + artistname + ', features: '
     for feature in features:
@@ -134,7 +136,7 @@ def update_output_div(artistname, features, maxsongs, clicks):
     #outstring = outstring + str(clicks)
     #return outstring
     if (clicks is None) or (int(clicks) <= lastclickcount):
-        lastclickcount = int(clicks)
+        #lastclickcount = int(clicks)
         return "Click Submit to make a new calculation."
 
     lastclickcount = int(clicks)
