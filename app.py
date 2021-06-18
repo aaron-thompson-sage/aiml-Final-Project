@@ -143,7 +143,8 @@ def update_output_div(artistname, features, maxsongs, clicks):
         return "Click Submit to make a new calculation."
 
     if (int(clicks) <= lastclickcount):
-        return str(clicks) + " clicks, " + lastclickcount + " lastclickcount"
+        return
+        #str(clicks) + " clicks, " + str(lastclickcount) + " lastclickcount"
 
     lastclickcount = int(clicks)
 
