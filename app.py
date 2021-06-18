@@ -83,7 +83,7 @@ def getdistance(f1, f2, features):
         distance += distance_feature(f1, f2, feature)
     return math.sqrt(distance)
 
-def findopposite(comparetrack):
+def findopposite(tracks, comparetrack):
     #for track in tracks:
     #     if track and ('Contredanse' in track['name']):
     #         comparetrack = track
@@ -189,12 +189,12 @@ def update_output_div(artistname, features, maxsongs, clicks):
     comparetrack = tracks[0]
 
     maxtrycount = 20
-    opposite = findopposite(comparetrack)
-    doubleopposite = findopposite(opposite)
+    opposite = findopposite(tracks, comparetrack)
+    doubleopposite = findopposite(tracks, opposite)
     while comparetrack['name'] != doubleopposite['name'] and maxtrycount > 0:
         comparetrack = opposite
-        opposite = findopposite(comparetrack)
-        doubleopposite = findopposite(opposite)
+        opposite = findopposite(tracks, comparetrack)
+        doubleopposite = findopposite(tracks, opposite)
         maxtrycount -= 1
 
     outstring = outstring + 'These 2 songs are opposites: ' + comparetrack['name'] + ' and ' + opposite['name'] + '.'
