@@ -183,7 +183,7 @@ def update_output_div(artistname, features, maxsongs, clicks):
                 feature = sp.audio_features(track['id'])[0]
                 feature['name'] = track['name']
                 tracks.append(feature)
-                if len(tracks) > maxsongs:
+                if len(tracks) > int(maxsongs):
                     break;
 
     comparetrack = tracks[0]
