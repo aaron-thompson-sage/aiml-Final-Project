@@ -15,6 +15,7 @@ sourceurl = 'https://github.com/aaron-thompson-sage/'
 githublink = 'https://github.com/aaron-thompson-sage/'
 lastclickcount = 0
 lastartistname = ''
+tracks = []
 clientid = 'a2b4005538904434809bf1a8974f3eb7'
 clientsecret = 'ea77d14c398e41d394fdcf94c1c79347'
 
@@ -130,6 +131,7 @@ def update_output_div(artistname, features, maxsongs, clicks):
     global lastartistname
     global clientid
     global client_secret
+    global tracks
 
     # for feature in features:
     #     outstring = outstring + feature + ' '
