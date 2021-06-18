@@ -11,8 +11,8 @@ from spotipy.oauth2 import SpotifyClientCredentials
 
 myheading1='Song variety by Artist'
 tabtitle = 'Final Project - Aaron Thompson'
-sourceurl = 'https://github.com/aaron-thompson-sage/'
-githublink = 'https://github.com/aaron-thompson-sage/'
+sourceurl = 'https://github.com/aaron-thompson-sage/aiml-Final-Project/blob/main/Final%20Project.ipynb'
+githublink = 'https://github.com/aaron-thompson-sage/aiml-Final-Project'
 lastclickcount = 0
 lastartistname = ''
 tracks = []
@@ -70,32 +70,16 @@ def distance_feature(feature1, feature2, featurename):
     return diff*diff
 
 def getdistance(f1, f2, features):
-    # features = [
-    #     'danceability',
-    #     'energy',
-    #     'speechiness',
-    #     'acousticness',
-    #     'instrumentalness',
-    #     'liveness',
-    #     'valence'
-    # ]
     distance = 0
     for feature in features:
         distance += distance_feature(f1, f2, feature)
     return math.sqrt(distance)
 
 def findopposite(tracks, comparetrack, features):
-    #for track in tracks:
-    #     if track and ('Contredanse' in track['name']):
-    #         comparetrack = track
-    #         break
-
-
     bestmatch = ''
     bestdistance = 1
     worstmatch = ''
     worstdistance = 0
-    #comparetrack = tracks[1]
     for track in tracks:
         if (track):
             distance = getdistance(comparetrack, track, features)
@@ -119,32 +103,17 @@ def findopposite(tracks, comparetrack, features):
     ]
 )
 def update_output_div(artistname, features, maxsongs, clicks):
-    # ek = determineEncryptionKey()
-    # port = os.Getenv("PORT")
-    # sessionStore = sessions.NewCookieStore(
-    #     []byte(os.Getenv("SESSION_AUTHENTICATION_KEY")),
-    #     ek,
-    # )
-    # r = http.Request()
-    # session = sessionStore.Get()
     global lastclickcount
     global lastartistname
     global clientid
     global client_secret
     global tracks
 
-    # for feature in features:
-    #     outstring = outstring + feature + ' '
-    # outstring = outstring + 'max: ' + str(maxsongs)
-    #outstring = outstring + str(clicks)
-    #return outstring
     if (clicks is None):
-        #lastclickcount = int(clicks)
         return "Click Submit to make a new calculation."
 
     if (int(clicks) <= lastclickcount):
         return
-        #str(clicks) + " clicks, " + str(lastclickcount) + " lastclickcount"
 
     lastclickcount = int(clicks)
 
@@ -153,11 +122,9 @@ def update_output_div(artistname, features, maxsongs, clicks):
 
         client_credentials_manager = SpotifyClientCredentials(client_id=clientid, client_secret=clientsecret)
         sp = spotipy.Spotify(client_credentials_manager=client_credentials_manager)
-        #sp.trace = False
         results = sp.search(q=artistname, type='artist', limit=20, offset=0)
 
         artisturi = results['artists']['items'][0]['id']
-        #artistname = results['artists']['items'][0]['name']
 
         spotify = spotipy.Spotify(client_credentials_manager=SpotifyClientCredentials(client_id=clientid, client_secret=clientsecret))
 
@@ -181,13 +148,9 @@ def update_output_div(artistname, features, maxsongs, clicks):
                 albums.append(album)
 
         for album in albums:
-            #album = albums[0]
-            #print(album['name'])
-            #print(album['uri'])
             if len(tracks) > int(maxsongs):
                 break;
             for track in spotify.album_tracks(album['id'])['items']:
-                #tracks.append(track)
                 feature = sp.audio_features(track['id'])[0]
                 feature['name'] = track['name']
                 tracks.append(feature)
