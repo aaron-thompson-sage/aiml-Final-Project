@@ -128,6 +128,8 @@ def update_output_div(artistname, features, maxsongs, clicks):
     # session = sessionStore.Get()
     global lastclickcount
     global lastartistname
+    global clientid
+    global client_secret
 
     outstring = 'Artist: ' + artistname + ', features: '
     for feature in features:
@@ -143,6 +145,10 @@ def update_output_div(artistname, features, maxsongs, clicks):
 
     if artistname != lastartistname:
         lastartistname = artistname
+
+        client_credentials_manager = SpotifyClientCredentials(client_id=clientid, client_secret=clientsecret)
+        sp = spotipy.Spotify(client_credentials_manager=client_credentials_manager)
+        #sp.trace = False
         results = sp.search(q=artistname, type='artist', limit=20, offset=0)
 
         artisturi = results['artists']['items'][0]['id']
