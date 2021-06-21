@@ -93,7 +93,7 @@ def findopposite(tracks, comparetrack, features):
 
     return worstmatch
 
-def featureprint(track, features)
+def featureprint(track, features):
     output = ''
     for feature in features:
         output = output + feature[0] + '(' + str(track[feature]) + ')'
