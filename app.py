@@ -97,7 +97,7 @@ def featureprint(track, features)
     output = ''
     for feature in features:
         output = output + feature[0] + '(' + str(track[feature]) + ')'
-
+    return output
 
 ########## Define Callback
 @app.callback(
