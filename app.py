@@ -93,6 +93,12 @@ def findopposite(tracks, comparetrack, features):
 
     return worstmatch
 
+def featureprint(track, features)
+    output = ''
+    for feature in features:
+        output = output + feature[0] + '(' + str(track[feature]) + ')'
+
+
 ########## Define Callback
 @app.callback(
     Output(component_id='my-div', component_property='children'),
@@ -168,7 +174,9 @@ def update_output_div(artistname, features, maxsongs, clicks):
         doubleopposite = findopposite(tracks, opposite, features)
         maxtrycount -= 1
 
-    outstring = 'These 2 songs are opposites: ' + comparetrack['name'] + ' and ' + opposite['name'] + '.'
+    outstring = 'These 2 songs are opposites: ' + comparetrack['name'] + ' and ' + opposite['name'] + '.  '
+    outstring = outstring + 'Feature values for ' + comparetrack['name'] + ': ' + featureprint(comparetrack, features)
+    outstring = outstring + ', and for ' + opposite['name'] + ': ' + featureprint(opposite, features) + '.'
 
     return outstring
 
