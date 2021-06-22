@@ -125,6 +125,7 @@ def load_tracks(artistname, maxsongs):
     resultartistname = results['artists']['items'][0]['name']
 
     if lastartisturi != artisturi:
+        print('resetting tracks', file=sys.stdout)
         tracks = []
     lastartisturi = artisturi
 
