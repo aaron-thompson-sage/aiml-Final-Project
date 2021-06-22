@@ -140,6 +140,8 @@ def load_tracks(artistname, maxsongs):
         if addalbum:
             albums.append(album)
 
+    print(albums[0]['artist'], file=sys.stdout)
+
     for album in albums:
         print(album['name'], file=sys.stdout)
         if len(tracks) > int(maxsongs):
