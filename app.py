@@ -158,6 +158,7 @@ def load_tracks(artistname, maxsongs):
         if skip:
             continue
 
+        maxalbumsperiteration = 5
         if len(tracks) > int(maxsongs):
             break;
         for track in spotify.album_tracks(album['id'])['items']:
@@ -168,6 +169,9 @@ def load_tracks(artistname, maxsongs):
             tracks.append(feature)
             if len(tracks) > int(maxsongs):
                 break;
+            if maxalbumsperiteration <= 0:
+                break;
+            maxalbumsperiteration = maxalbumsperiteration - 1
     return tracks
 
 ########## Define Callback
