@@ -22,6 +22,7 @@ sourceurl = 'https://github.com/aaron-thompson-sage/aiml-Final-Project/blob/main
 githublink = 'https://github.com/aaron-thompson-sage/aiml-Final-Project'
 lastclickcount = 0
 lastartistname = ''
+lastartisturi = ''
 tracks = []
 clientid = 'a2b4005538904434809bf1a8974f3eb7'
 clientsecret = 'ea77d14c398e41d394fdcf94c1c79347'
@@ -112,6 +113,8 @@ def featureprint(track, features):
 def load_tracks(artistname, maxsongs):
     global clientid
     global clientsecret
+    global tracks
+    global lastartisturi
 
     client_credentials_manager = SpotifyClientCredentials(client_id=clientid, client_secret=clientsecret)
     sp = spotipy.Spotify(client_credentials_manager=client_credentials_manager)
@@ -119,6 +122,10 @@ def load_tracks(artistname, maxsongs):
 
     artisturi = results['artists']['items'][0]['id']
     resultartistname = results['artists']['items'][0]['name']
+
+    if lastartisturi != artisturi:
+        tracks = []
+    lastartisturi = artisturi
 
     spotify = spotipy.Spotify(client_credentials_manager=SpotifyClientCredentials(client_id=clientid, client_secret=clientsecret))
 
@@ -130,7 +137,6 @@ def load_tracks(artistname, maxsongs):
 
     albumtracks = []
     tids = []
-    tracks = []
     albums = []
     for album in allalbums:
         addalbum = True
@@ -143,11 +149,21 @@ def load_tracks(artistname, maxsongs):
 
     for album in albums:
         print(album['name'], file=sys.stdout)
+
+        skip = False
+        for oldtrack in tracks:
+            if album['name'] == oldtrack['album']:
+                skip = True
+                break
+        if skip:
+            continue
+
         if len(tracks) > int(maxsongs):
             break;
         for track in spotify.album_tracks(album['id'])['items']:
             feature = sp.audio_features(track['id'])[0]
             feature['name'] = track['name']
+            feature['album'] = album['name']
             feature['artist'] = resultartistname
             tracks.append(feature)
             if len(tracks) > int(maxsongs):
@@ -175,16 +191,16 @@ def update_output_div(artistname, features, maxsongs, clicks):
     if (int(clicks) <= lastclickcount):
         return
 
-    lastclickcount = int(clicks)
-
     if artistname != lastartistname:
+        load_tracks(artistname, maxsongs)
         lastartistname = artistname
-
-        tracks = load_tracks(artistname, maxsongs)
         #job = q.enqueue(load_tracks, artistname, maxsongs)
 
     #if job.result == None:
         #return "working... wait a bit longer and press Submit again."
+
+    print('clicks: ' + str(clicks), file=sys.stdout)
+    lastclickcount = int(clicks)
 
     comparetrack = tracks[0]
 
