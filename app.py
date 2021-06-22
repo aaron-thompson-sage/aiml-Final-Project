@@ -23,6 +23,7 @@ githublink = 'https://github.com/aaron-thompson-sage/aiml-Final-Project'
 lastclickcount = 0
 lastartistname = ''
 lastartisturi = ''
+lastdone = False
 tracks = []
 clientid = 'a2b4005538904434809bf1a8974f3eb7'
 clientsecret = 'ea77d14c398e41d394fdcf94c1c79347'
@@ -147,20 +148,23 @@ def load_tracks(artistname, maxsongs):
         if addalbum:
             albums.append(album)
 
+    done = True
+    maxalbumsperiteration = 5
     for album in albums:
         print(album['name'], file=sys.stdout)
 
         skip = False
         for oldtrack in tracks:
             if album['name'] == oldtrack['album']:
+                print('skipping ' + album['name'], file=sys.stdout)
                 skip = True
                 break
-        if skip:
+        if skip == True:
             continue
 
-        maxalbumsperiteration = 5
         if len(tracks) > int(maxsongs):
             break;
+
         for track in spotify.album_tracks(album['id'])['items']:
             feature = sp.audio_features(track['id'])[0]
             feature['name'] = track['name']
@@ -169,10 +173,12 @@ def load_tracks(artistname, maxsongs):
             tracks.append(feature)
             if len(tracks) > int(maxsongs):
                 break;
-            if maxalbumsperiteration <= 0:
-                break;
-            maxalbumsperiteration = maxalbumsperiteration - 1
-    return tracks
+        if maxalbumsperiteration <= 0:
+            done = False
+            break;
+        maxalbumsperiteration = maxalbumsperiteration - 1
+
+    return done
 
 ########## Define Callback
 @app.callback(
@@ -188,6 +194,7 @@ def update_output_div(artistname, features, maxsongs, clicks):
     global lastartistname
     global tracks
     global job
+    global lastdone
 
     if (clicks is None):
         return "Click Submit to make a new calculation."
@@ -195,9 +202,12 @@ def update_output_div(artistname, features, maxsongs, clicks):
     if (int(clicks) <= lastclickcount):
         return
 
-    if artistname != lastartistname:
-        load_tracks(artistname, maxsongs)
+    if artistname != lastartistname or lastdone == False:
+        done = load_tracks(artistname, maxsongs)
+        lastdone = done
         lastartistname = artistname
+        if done == False:
+            return "..."
         #job = q.enqueue(load_tracks, artistname, maxsongs)
 
     #if job.result == None:
