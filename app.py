@@ -109,7 +109,10 @@ def featureprint(track, features):
         output = output + feature[0] + '(' + str(track[feature]) + ')'
     return output
 
-def load_tracks(artistname, clientid, clientsecret):
+def load_tracks(artistname, maxsongs):
+    global clientid
+    global clientsecret
+
     client_credentials_manager = SpotifyClientCredentials(client_id=clientid, client_secret=clientsecret)
     sp = spotipy.Spotify(client_credentials_manager=client_credentials_manager)
     results = sp.search(q=artistname, type='artist', limit=20, offset=0)
@@ -161,8 +164,6 @@ def load_tracks(artistname, clientid, clientsecret):
 def update_output_div(artistname, features, maxsongs, clicks):
     global lastclickcount
     global lastartistname
-    global clientid
-    global clientsecret
     global tracks
     global job
 
@@ -177,7 +178,7 @@ def update_output_div(artistname, features, maxsongs, clicks):
     if artistname != lastartistname:
         lastartistname = artistname
 
-        tracks = load_tracks(artistname, clientid, clientsecret)
+        tracks = load_tracks(artistname, maxsongs)
         #job = q.enqueue(load_tracks, artistname, clientid, clientsecret)
 
     #if job.result == None:
