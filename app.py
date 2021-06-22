@@ -7,7 +7,7 @@ import spotipy
 import math
 from spotipy.oauth2 import SpotifyClientCredentials
 import os
-import psycopg2
+#import psycopg2
 from rq import Queue
 from worker import conn
 
