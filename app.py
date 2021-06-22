@@ -10,6 +10,7 @@ import os
 #import psycopg2
 from rq import Queue
 from worker import conn
+import sys
 
 q = Queue(connection = conn)
 
@@ -137,6 +138,7 @@ def load_tracks(artistname, clientid, clientsecret):
             albums.append(album)
 
     for album in albums:
+        print(album['name'], file=sys.stdout)
         if len(tracks) > int(maxsongs):
             break;
         for track in spotify.album_tracks(album['id'])['items']:
@@ -175,12 +177,12 @@ def update_output_div(artistname, features, maxsongs, clicks):
     if artistname != lastartistname:
         lastartistname = artistname
 
-        #tracks = load_tracks(artistname, clientid, clientsecret)
-        job = q.enqueue(load_tracks, artistname, clientid, clientsecret)
+        tracks = load_tracks(artistname, clientid, clientsecret)
+        #job = q.enqueue(load_tracks, artistname, clientid, clientsecret)
 
-    if job.result == None:
-        return "working... wait a bit longer and press Submit again."
-        
+    #if job.result == None:
+        #return "working... wait a bit longer and press Submit again."
+
     comparetrack = tracks[0]
 
     maxtrycount = 20
