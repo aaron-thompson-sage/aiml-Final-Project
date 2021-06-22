@@ -217,6 +217,9 @@ def update_output_div(artistname, features, maxsongs, clicks):
     print('clicks: ' + str(clicks), file=sys.stdout)
     lastclickcount = int(clicks)
 
+    if len(tracks) == 0:
+        return "No results found"
+        
     comparetrack = tracks[0]
 
     maxtrycount = 20
