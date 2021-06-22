@@ -6,6 +6,12 @@ from dash.dependencies import Input, Output, State
 import spotipy
 import math
 from spotipy.oauth2 import SpotifyClientCredentials
+import os
+import psycopg2
+from rq import Queue
+from worker import conn
+
+q = Queue(connection = conn)
 
 ########### Define your variables ######
 
@@ -18,6 +24,8 @@ lastartistname = ''
 tracks = []
 clientid = 'a2b4005538904434809bf1a8974f3eb7'
 clientsecret = 'ea77d14c398e41d394fdcf94c1c79347'
+#DATABASE_URL = os.environ['DATABASE_URL']
+#conn = psycopg2.connect(DATABASE_URL, sslmode='require')
 
 ########### Initiate the app
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
@@ -99,6 +107,45 @@ def featureprint(track, features):
         output = output + feature[0] + '(' + str(track[feature]) + ')'
     return output
 
+def load_tracks(artistname, clientid, clientsecret):
+    client_credentials_manager = SpotifyClientCredentials(client_id=clientid, client_secret=clientsecret)
+    sp = spotipy.Spotify(client_credentials_manager=client_credentials_manager)
+    results = sp.search(q=artistname, type='artist', limit=20, offset=0)
+
+    artisturi = results['artists']['items'][0]['id']
+
+    spotify = spotipy.Spotify(client_credentials_manager=SpotifyClientCredentials(client_id=clientid, client_secret=clientsecret))
+
+    results = spotify.artist_albums(artisturi, album_type='album')
+    allalbums = results['items']
+    while results['next']:
+        results = spotify.next(results)
+        allalbums.extend(results['items'])
+
+    albumtracks = []
+    tids = []
+    tracks = []
+    albums = []
+    for album in allalbums:
+        addalbum = True
+        for existingalbum in albums:
+            if existingalbum['name'] == album['name']:
+                addalbum = False
+                break
+        if addalbum:
+            albums.append(album)
+
+    for album in albums:
+        if len(tracks) > int(maxsongs):
+            break;
+        for track in spotify.album_tracks(album['id'])['items']:
+            feature = sp.audio_features(track['id'])[0]
+            feature['name'] = track['name']
+            tracks.append(feature)
+            if len(tracks) > int(maxsongs):
+                break;
+    return tracks
+
 ########## Define Callback
 @app.callback(
     Output(component_id='my-div', component_property='children'),
@@ -112,7 +159,7 @@ def update_output_div(artistname, features, maxsongs, clicks):
     global lastclickcount
     global lastartistname
     global clientid
-    global client_secret
+    global clientsecret
     global tracks
 
     if (clicks is None):
@@ -126,42 +173,8 @@ def update_output_div(artistname, features, maxsongs, clicks):
     if artistname != lastartistname:
         lastartistname = artistname
 
-        client_credentials_manager = SpotifyClientCredentials(client_id=clientid, client_secret=clientsecret)
-        sp = spotipy.Spotify(client_credentials_manager=client_credentials_manager)
-        results = sp.search(q=artistname, type='artist', limit=20, offset=0)
-
-        artisturi = results['artists']['items'][0]['id']
-
-        spotify = spotipy.Spotify(client_credentials_manager=SpotifyClientCredentials(client_id=clientid, client_secret=clientsecret))
-
-        results = spotify.artist_albums(artisturi, album_type='album')
-        allalbums = results['items']
-        while results['next']:
-            results = spotify.next(results)
-            allalbums.extend(results['items'])
-
-        albumtracks = []
-        tids = []
-        tracks = []
-        albums = []
-        for album in allalbums:
-            addalbum = True
-            for existingalbum in albums:
-                if existingalbum['name'] == album['name']:
-                    addalbum = False
-                    break
-            if addalbum:
-                albums.append(album)
-
-        for album in albums:
-            if len(tracks) > int(maxsongs):
-                break;
-            for track in spotify.album_tracks(album['id'])['items']:
-                feature = sp.audio_features(track['id'])[0]
-                feature['name'] = track['name']
-                tracks.append(feature)
-                if len(tracks) > int(maxsongs):
-                    break;
+        #tracks = load_tracks(artistname, clientid, clientsecret)
+        tracks = q.enqueue(load_tracks, artistname, clientid, clientsecret)
 
     comparetrack = tracks[0]
 
