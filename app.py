@@ -24,6 +24,7 @@ lastartistname = ''
 tracks = []
 clientid = 'a2b4005538904434809bf1a8974f3eb7'
 clientsecret = 'ea77d14c398e41d394fdcf94c1c79347'
+job = None
 #DATABASE_URL = os.environ['DATABASE_URL']
 #conn = psycopg2.connect(DATABASE_URL, sslmode='require')
 
@@ -161,6 +162,7 @@ def update_output_div(artistname, features, maxsongs, clicks):
     global clientid
     global clientsecret
     global tracks
+    global job
 
     if (clicks is None):
         return "Click Submit to make a new calculation."
@@ -174,8 +176,11 @@ def update_output_div(artistname, features, maxsongs, clicks):
         lastartistname = artistname
 
         #tracks = load_tracks(artistname, clientid, clientsecret)
-        tracks = q.enqueue(load_tracks, artistname, clientid, clientsecret)
+        job = q.enqueue(load_tracks, artistname, clientid, clientsecret)
 
+    if job.result == None:
+        return "working... wait a bit longer and press Submit again."
+        
     comparetrack = tracks[0]
 
     maxtrycount = 20
