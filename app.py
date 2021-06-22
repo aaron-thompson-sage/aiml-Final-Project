@@ -178,11 +178,11 @@ def update_output_div(artistname, features, maxsongs, clicks):
     if artistname != lastartistname:
         lastartistname = artistname
 
-        #tracks = load_tracks(artistname, maxsongs)
-        job = q.enqueue(load_tracks, artistname, maxsongs)
+        tracks = load_tracks(artistname, maxsongs)
+        #job = q.enqueue(load_tracks, artistname, maxsongs)
 
-    if job.result == None:
-        return "working... wait a bit longer and press Submit again."
+    #if job.result == None:
+        #return "working... wait a bit longer and press Submit again."
 
     comparetrack = tracks[0]
 
