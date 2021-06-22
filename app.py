@@ -118,6 +118,7 @@ def load_tracks(artistname, maxsongs):
     results = sp.search(q=artistname, type='artist', limit=20, offset=0)
 
     artisturi = results['artists']['items'][0]['id']
+    resultartistname = results['artists']['items'][0]['name']
 
     spotify = spotipy.Spotify(client_credentials_manager=SpotifyClientCredentials(client_id=clientid, client_secret=clientsecret))
 
@@ -140,8 +141,6 @@ def load_tracks(artistname, maxsongs):
         if addalbum:
             albums.append(album)
 
-    print(albums[0]['artist'], file=sys.stdout)
-
     for album in albums:
         print(album['name'], file=sys.stdout)
         if len(tracks) > int(maxsongs):
@@ -149,6 +148,7 @@ def load_tracks(artistname, maxsongs):
         for track in spotify.album_tracks(album['id'])['items']:
             feature = sp.audio_features(track['id'])[0]
             feature['name'] = track['name']
+            feature['artist'] = resultartistname
             tracks.append(feature)
             if len(tracks) > int(maxsongs):
                 break;
@@ -197,7 +197,7 @@ def update_output_div(artistname, features, maxsongs, clicks):
         doubleopposite = findopposite(tracks, opposite, features)
         maxtrycount -= 1
 
-    outstring = 'These 2 songs are opposites: ' + comparetrack['name'] + ' and ' + opposite['name'] + '.  '
+    outstring = 'For ' + comparetrack['artist'] + ', these 2 songs are opposites: ' + comparetrack['name'] + ' and ' + opposite['name'] + '.  '
     outstring = outstring + 'Feature values for ' + comparetrack['name'] + ': ' + featureprint(comparetrack, features)
     outstring = outstring + ', and for ' + opposite['name'] + ': ' + featureprint(opposite, features) + '.'
 
